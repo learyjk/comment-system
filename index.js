@@ -1,7 +1,15 @@
 require("dotenv").config();
 const express = require("express");
+var bodyParser = require("body-parser");
+const morgan = require("morgan");
 const app = express();
 const port = 3000;
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+app.use(morgan("tiny"));
 
 var Airtable = require("airtable");
 Airtable.configure({
@@ -12,14 +20,22 @@ var base = Airtable.base(process.env.AIRTABLE_BASE_ID);
 
 const getRecords = async () => {
   const records = await base("Comments").select().firstPage();
-  return recrods;
+  return records;
 };
 
-const getRecordsByPostId = async (postId) => {
-  const records = await base("Comments")
-    .select({ filterByFormula: `post_id=${postId}`, view: "Grid view" })
-    .firstPage();
-  return records;
+const getRecordsByPostId = async (pageId) => {
+  try {
+    const records = await base("Comments")
+      .select({
+        filterByFormula: `post_id="${pageId}"`,
+        view: "Grid view",
+      })
+      .firstPage();
+    return records;
+  } catch (error) {
+    console.log("getRecordsByPostId error", error);
+    return error;
+  }
 };
 
 app.get("/", (req, res) => {
@@ -28,16 +44,21 @@ app.get("/", (req, res) => {
 });
 
 app.get("/comments", async (req, res) => {
-  const records = await getRecordsByPostId(2);
-  console.log("records", records);
-  console.log(Array.isArray(records));
-  records.forEach((record) => {
-    console.log(record);
+  console.log("req.query", req.query);
+  res.set({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
   });
-  let newRecords = records.map((record) => {
-    return { ...record._rawJson };
-  });
-  res.send(newRecords);
+  try {
+    const records = await getRecordsByPostId(req.query.pageId);
+    let newRecords = records.map((record) => {
+      return { ...record._rawJson };
+    });
+    res.json(newRecords);
+  } catch (error) {
+    console.log("GET /comments error", error);
+    res.status(500).send(error);
+  }
 });
 
 app.listen(port, () => {
