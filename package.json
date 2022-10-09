@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/learyjk/comment-system#readme",
   "dependencies": {
+    "airtable": "^0.11.5",
     "express": "^4.18.1"
   }
 }
