@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 const morgan = require("morgan");
 const app = express();
 const port = 3000;
+const port2 = 3001;
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -63,4 +64,8 @@ app.get("/comments", async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
+});
+
+app.listen(port2, () => {
+  console.log(`Example app listening on port ${port2}`);
 });
