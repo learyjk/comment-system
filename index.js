@@ -44,7 +44,7 @@ const addComment = async (comment) => {
     {
       post_id: comment.pageId,
       name: comment.name,
-      body: comment.body,
+      body: comment.comment,
     },
 
     function (err, records) {
