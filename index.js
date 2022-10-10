@@ -39,6 +39,28 @@ const getRecordsByPostId = async (pageId) => {
   }
 };
 
+const addComment = async (comment) => {
+  await base("Comments").create(
+    {
+      fields: {
+        post_id: comment.pageId,
+        name: comment.name,
+        body: comment.body,
+      },
+    },
+
+    function (err, records) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      records.forEach(function (record) {
+        console.log(record.getId());
+      });
+    }
+  );
+};
+
 app.get("/", (req, res) => {
   console.log("get request to /");
   res.send("Hello There");
@@ -65,7 +87,13 @@ app.get("/comments", async (req, res) => {
 app.post("/webhooks/addComment", async (req, res) => {
   console.log("req.body", req.body);
   console.log("POST request sent to /webhooks/addComment");
-  res.status(200).send();
+  try {
+    await addComment(req.body.data);
+    res.status(201).send();
+  } catch (error) {
+    console.log("error adding comment", error);
+    res.status(500).send();
+  }
 });
 
 app.listen(port, () => {
