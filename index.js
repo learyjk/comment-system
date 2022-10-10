@@ -62,6 +62,12 @@ app.get("/comments", async (req, res) => {
   }
 });
 
+app.post("/webhooks/addComment", async (req, res) => {
+  console.log("req.body", req.body);
+  console.log("POST request sent to /webhooks/addComment");
+  res.status(200).send();
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
