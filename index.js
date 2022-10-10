@@ -42,11 +42,9 @@ const getRecordsByPostId = async (pageId) => {
 const addComment = async (comment) => {
   await base("Comments").create(
     {
-      {
-        post_id: comment.pageId,
-        name: comment.name,
-        body: comment.body,
-      },
+      post_id: comment.pageId,
+      name: comment.name,
+      body: comment.body,
     },
 
     function (err, records) {
