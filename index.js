@@ -52,9 +52,9 @@ const addComment = async (comment) => {
         console.error(err);
         return;
       }
-      records.forEach(function (record) {
-        console.log(record.getId());
-      });
+      // records.forEach(function (record) {
+      //   console.log(record.getId());
+      // });
     }
   );
 };
